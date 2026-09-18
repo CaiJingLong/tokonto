@@ -1,0 +1,57 @@
+name: Publish npm
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing release tag, for example v0.1.1'
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: refs/tags/${{ github.event.release.tag_name || inputs.tag }}
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+      - name: Install npm with OIDC support
+        run: npm install --global npm@11.19.1 --ignore-scripts
+      - name: Validate package and release identity
+        run: |
+          bun -e '
+            import p from "./package.json";
+            if (process.env.RELEASE_TAG !== `v${p.version}`) throw new Error("Tag/version mismatch");
+            if (!/^\d+\.\d+\.\d+$/.test(p.version)) throw new Error("Only stable versions are published as latest");
+            if (p.name !== "tokonto") throw new Error("Unexpected package name");
+            if (p.repository.url !== `git+https://github.com/${process.env.GITHUB_REPOSITORY}.git`) throw new Error("Repository mismatch");
+          '
+      - run: bun install --frozen-lockfile
+      - run: bun test
+      - run: bun run typecheck
+      - run: bun run npm:pack
+      - run: bun run npm:smoke
+      - name: Publish verified tarball with OIDC
+        run: |
+          package_version="$(bun -p 'require("./package.json").version')"
+          npm publish "artifacts/npm/tokonto-${package_version}.tgz" --access public --registry=https://registry.npmjs.org/ --ignore-scripts

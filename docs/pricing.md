@@ -9,11 +9,11 @@ Dashboard 的“价格规则”分别展示手动规则和自动启用的预设�
 CLI / AI：
 
 ```sh
-token-usage prices catalog --json
-token-usage prices list --json
-token-usage prices explain --source codex --id <事件ID> --json
-token-usage prices fill --json
-token-usage prices fill --apply --json
+tokonto prices catalog --json
+tokonto prices list --json
+tokonto prices explain --source codex --id <事件ID> --json
+tokonto prices fill --json
+tokonto prices fill --apply --json
 ```
 
 `prices fill` 默认仅预览，应用时只填补能够成功报价的未定价记录；保留已有费用和冲突。`prices reprice` 用于明确要求重算全部记录的场景。两者都支持 query 日期/来源/模型筛选，并保留逐条价格历史。规则变更、预设更新和启动程序都不会自动改写已有报价。

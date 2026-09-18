@@ -1,5 +1,6 @@
 node_modules/
 dist/
+.tokonto/
 .token-usage/
 *.sqlite*
 .DS_Store

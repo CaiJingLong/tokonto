@@ -29,7 +29,7 @@ export async function startServer(app: App, input: unknown) {
       if (req.method === 'GET' && url.pathname === '/api/health') return json({ ok: true, data: { version: VERSION } });
       if (req.method === 'GET' && assets.has(url.pathname)) { const a = assets.get(url.pathname)!; return new Response(a.body, { headers: { ...headers, 'Content-Type': a.type } }); }
       if (url.pathname === '/api/command' && req.method === 'POST') {
-        if (req.headers.get('x-token-usage') !== '1' || !req.headers.get('content-type')?.startsWith('application/json')) return json({ ok: false, error: { code: 'FORBIDDEN', message: 'Explicit JSON application request required' } }, 403);
+        if ((req.headers.get('x-tokonto') !== '1' && req.headers.get('x-token-usage') !== '1') || !req.headers.get('content-type')?.startsWith('application/json')) return json({ ok: false, error: { code: 'FORBIDDEN', message: 'Explicit JSON application request required' } }, 403);
         try {
           const body = envelope.parse(await req.json());
           if (!allowed.has(body.command)) throw new AppError('FORBIDDEN', 'This operation is available only through the local CLI');

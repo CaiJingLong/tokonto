@@ -1,14 +1,15 @@
 ---
-name: token-usage
-description: 使用 token-usage CLI 管理本地 AI 用量、模型分时价格和脚本 Provider，查询或解释 token 与费用统计。适用于接入 agent 日志、配置优惠日期和峰谷时段、比较来源或模型费用，以及历史费用重算。
+name: tokonto
+description: 使用 tokonto CLI 管理本地 AI 用量、模型分时价格和脚本 Provider，查询或解释 token 与费用统计。适用于接入 agent 日志、配置优惠日期和峰谷时段、比较来源或模型费用，以及历史费用重算。
 ---
 
-使用项目提供的 `token-usage` CLI。尚未链接命令时，发行包使用 `bun /安装目录/cli.js <子命令>`，源码根目录使用 `bun run cli -- <子命令>`；Bun 不在 PATH 时使用已知的 Bun 可执行文件绝对路径。`token-usage --version --json` 查看应用版本，不初始化账本。
+使用项目提供的 `tokonto` CLI。尚未链接命令时，发行包使用 `bun /安装目录/cli.js <子命令>`，源码根目录使用 `bun run cli -- <子命令>`；Bun 不在 PATH 时使用已知的 Bun 可执行文件绝对路径。`tokonto --version --json` 查看应用版本，不初始化账本。
 
-先运行 `token-usage schema --json` 获取命令清单、参数 JSON Schema 和用量/价格/Provider 协议。需要单个命令时用 `schema --command "prices put" --json`。全部业务功能都有非交互 CLI，不需要控制浏览器。
+先运行 `tokonto schema --json` 获取命令清单、参数 JSON Schema 和用量/价格/Provider 协议。需要单个命令时用 `schema --command "prices put" --json`。全部业务功能都有非交互 CLI，不需要控制浏览器。
 
 - 稳定输出 `{ok,data}` 或 `{ok:false,error:{code,message,details}}`，始终使用 `--json`。stdout 仅含 JSON，日志在 stderr。失败先根据错误码修正，避免重复执行失败的插件。
-- 复杂输入写 JSON 文件，再传 `--input @/absolute/path/input.json`，或从 stdin 传 `--input -`。不要把不受信任文本拼进 shell 命令。`--data-dir` 显式选择账本，默认 `~/.token-usage`。
+- 复杂输入写 JSON 文件，再传 `--input @/absolute/path/input.json`，或从 stdin 传 `--input -`。不要把不受信任文本拼进 shell 命令。`--data-dir` 显式选择账本，默认 `~/.tokonto`。
+- `TOKONTO_HOME` 设置默认账本目录；兼容旧变量 `TOKEN_USAGE_HOME`。若新目录无账本，会原地读取已有 `~/.token-usage` 账本。先用 `doctor --json` 确认实际目录，不因改名创建空账本替代旧数据。
 - 模型价格由 `vendor + model + channel` 匹配。用户说某 app 名字时，不要误认为模型供应商。渠道不明先查询现有来源配置；不要把订阅或代理渠道当官方 API。
 - 手动规则优先；没有匹配手动规则时，内置模型预设自动兜底。`prices list` 分别返回 rules 与 presets，`prices catalog` 查看预设。quote.source 为 custom/preset，预设的 assumptions 与 verifiedAt 说明参考口径；历史、代理、订阅的预设估算不是实际账单，不为套用预设而改写来源渠道。
 - `prices fill` 预览补算未定价记录，`--apply` 应用并保存完整审计，支持 query 筛选，保留已定价和冲突记录。已有授权要求补算时可应用；仅查询价格不代表授权改写历史。`prices reprice` 则会重算范围内的全部记录。

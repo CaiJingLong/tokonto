@@ -7,4 +7,4 @@
 - 修改价格不得静默重算历史；采集修订沿用旧规则快照，全部费用变更保留审计。
 - Provider 只保存白名单用量元数据；不能持久化聊天正文或凭证。
 - 测试使用脱敏构造数据和隔离临时目录，不把个人日志提交到仓库。
-- 项目 Skill：`.agents/skills/token-usage/SKILL.md`；操作用量/来源/价格时先用 CLI `schema --json` 发现接口。
+- 项目 Skill：`.agents/skills/tokonto/SKILL.md`；操作用量/来源/价格时先用 CLI `schema --json` 发现接口。

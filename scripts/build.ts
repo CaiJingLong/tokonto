@@ -4,7 +4,7 @@ process.chdir(fileURLToPath(new URL('..', import.meta.url)));
 rmSync('dist', { recursive: true, force: true });
 mkdirSync('dist/web', { recursive: true }); mkdirSync('dist/skill', { recursive: true });
 for (const file of ['index.html', 'style.css']) copyFileSync(`web/${file}`, `dist/web/${file}`);
-copyFileSync('.agents/skills/token-usage/SKILL.md', 'dist/skill/SKILL.md');
+copyFileSync('.agents/skills/tokonto/SKILL.md', 'dist/skill/SKILL.md');
 for (const [entry, outdir, target] of [['web/app.ts', 'dist/web', 'browser'], ['src/cli.ts', 'dist', 'bun']] as const) {
   const result = await Bun.build({ entrypoints: [entry], outdir, target, minify: target === 'browser' });
   if (!result.success) { for (const log of result.logs) console.error(log); process.exit(1); }

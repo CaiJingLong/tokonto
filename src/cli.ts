@@ -22,15 +22,15 @@ let app: App | undefined;
 try {
   const { name, flags } = parse(process.argv.slice(2)); const { dataDir, json, input, help, version, ...options } = flags;
   if (version) {
-    console.log(json ? JSON.stringify({ ok: true, data: { name: 'token-usage', version: VERSION } }) : VERSION);
+    console.log(json ? JSON.stringify({ ok: true, data: { name: 'tokonto', version: VERSION } }) : VERSION);
   } else if (!name || name === 'schema' || help) {
     const output = discovery(help && name ? name : options.command);
     if (json || name === 'schema') console.log(JSON.stringify({ ok: true, data: output }));
     else {
-      console.log('token-usage · 本地 AI 用量与分时计费\n\n用法: token-usage <command> [--input @file.json] [--json] [--data-dir path]\n');
+      console.log('tokonto · 本地 AI 用量与分时计费\n\n用法: tokonto <command> [--input @file.json] [--json] [--data-dir path]\n');
       for (const c of output.commands) console.log(`${c.name.padEnd(20)} ${c.description}`);
       if (help && name) console.log('\n' + JSON.stringify(output.commands[0]?.inputSchema, null, 2));
-      console.log('\nAI 调用: token-usage schema --json\n版本: token-usage --version (-V)');
+      console.log('\nAI 调用: tokonto schema --json\n版本: tokonto --version (-V)');
     }
   } else {
     let payload: any = {};

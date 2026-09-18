@@ -12,7 +12,7 @@ import { parseRecords } from './providers/parsers';
 const empty = z.object({}).strict();
 const dryRun = z.boolean().default(false);
 const queryFields = querySchema.shape;
-const skillPath = existsSync(join(import.meta.dir, 'skill/SKILL.md')) ? join(import.meta.dir, 'skill/SKILL.md') : join(import.meta.dir, '../.agents/skills/token-usage/SKILL.md');
+const skillPath = existsSync(join(import.meta.dir, 'skill/SKILL.md')) ? join(import.meta.dir, 'skill/SKILL.md') : join(import.meta.dir, '../.agents/skills/tokonto/SKILL.md');
 export const serverSchema = z.object({ port: z.number().int().min(0).max(65535).default(4318), interval: z.number().int().min(0).max(86400).default(60), open: z.boolean().default(false) }).strict();
 type Command = { name: string; description: string; mutation?: boolean; input: z.ZodType; run: (app: App, input: any) => unknown | Promise<unknown> };
 const command = (name: string, description: string, input: z.ZodType, run: Command['run'], mutation = false): Command => ({ name, description, input, run, mutation });
@@ -56,7 +56,7 @@ export const commands: Command[] = [
   command('audit list', 'Last 100 configuration and repricing operations', empty, app => app.store.history()),
   command('skill show', 'Print the portable AI skill shipped with this project', empty, async () => ({ content: await Bun.file(skillPath).text() })),
   command('skill install', 'Install skill into a chosen platform skill directory; refuse overwrite', z.object({ target: z.string().default(join(homedir(), '.codex/skills')), dryRun }).strict(), async (_, x) => {
-    const target = resolve(x.target, 'token-usage'); if (existsSync(target)) throw new AppError('ALREADY_EXISTS', `Skill directory already exists: ${target}`);
+    const target = resolve(x.target, 'tokonto'); if (existsSync(target)) throw new AppError('ALREADY_EXISTS', `Skill directory already exists: ${target}`);
     const content = await Bun.file(skillPath).text(); if (!x.dryRun) { mkdirSync(target, { recursive: true }); writeFileSync(join(target, 'SKILL.md'), content); }
     return { applied: !x.dryRun, path: target };
   }, true),
@@ -64,7 +64,7 @@ export const commands: Command[] = [
 export function discovery(name?: string) {
   const selected = name ? commands.filter(c => c.name === name || c.name.startsWith(name + ' ')) : commands;
   if (name && !selected.length && name !== 'server' && name !== 'schema') throw new AppError('UNKNOWN_COMMAND', `Unknown command: ${name}`);
-  return { version: 1, protocolVersion: 1, globals: { dataDir: 'TOKEN_USAGE_HOME or ~/.token-usage', json: 'Machine-readable stdout', input: 'JSON string, @file or - for stdin', help: 'Show command help', version: '--version or -V; reports app version without opening a database' },
+  return { version: 1, protocolVersion: 1, globals: { dataDir: 'Explicit --data-dir > TOKONTO_HOME > legacy TOKEN_USAGE_HOME; otherwise existing ~/.tokonto/usage.sqlite > legacy ~/.token-usage/usage.sqlite > new ~/.tokonto', json: 'Machine-readable stdout', input: 'JSON string, @file or - for stdin', help: 'Show command help', version: '--version or -V; reports app version without opening a database' },
     commands: [...selected.map(c => ({ name: c.name, description: c.description, mutation: !!c.mutation, inputSchema: z.toJSONSchema(c.input, { io: 'input' }) })), ...(!name || name === 'server' ? [{ name: 'server', description: 'Start loopback dashboard server; interval is seconds, 0 disables automatic sync', mutation: true, inputSchema: z.toJSONSchema(serverSchema, { io: 'input' }) }] : []), ...(!name || name === 'schema' ? [{ name: 'schema', description: 'Discover all commands or a command group', mutation: false, inputSchema: z.toJSONSchema(z.object({ command: id.optional() }).strict(), { io: 'input' }) }] : [])],
     schemas: { event: z.toJSONSchema(eventSchema, { io: 'input' }), priceRule: z.toJSONSchema(ruleSchema, { io: 'input' }), provider: z.toJSONSchema(providerSchema, { io: 'input' }), pluginResponse: z.toJSONSchema(z.object({ protocolVersion: z.literal(1), events: z.array(eventSchema.omit({ source: true }).extend({ source: id.optional() })).max(50000), cursor: z.string().max(4096).optional() }).strict(), { io: 'input' }) },
     contracts: { tokens: 'Disjoint categories; output includes reasoning', prices: 'Decimal strings per million tokens; manual rules win, model presets fallback only when no manual match; matching priority wins within each set; ties error; stored quotes pinned; prices fill previews unpriced-only backfill', ranges: '[from,to); local dateTo exclusive; overnight anchored to start weekday', costs: 'costs=rule estimates; reportedCosts=source-reported; sourceEstimates=source estimated', plugins: 'stdin {protocolVersion:1,action:collect,cursor:null|string}; stdout {protocolVersion:1,events:[],cursor?:string}; stable ids; stderr for logs; 16MiB stdout / 64KiB stderr' } };

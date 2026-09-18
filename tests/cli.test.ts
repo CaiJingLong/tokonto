@@ -1,17 +1,48 @@
 import { expect, test } from 'bun:test';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import manifest from '../package.json';
+import { App, defaultDataDir } from '../src/app';
 const cli = join(import.meta.dir, '../src/cli.ts');
 test('version works without initializing a database and matches the release manifest', async () => {
   const root = mkdtempSync(join(tmpdir(), 'token-version-'));
   try {
     const r = await run(join(root, 'unused'), ['--version']);
     expect(r.code).toBe(0); expect(r.value.data.version).toBe(manifest.version);
+    expect(r.value.data.name).toBe('tokonto');
     expect(await Bun.file(join(root, 'unused', 'usage.sqlite')).exists()).toBe(false);
     const p = Bun.spawn([process.execPath, cli, '-V'], { stdout: 'pipe' });
     expect((await new Response(p.stdout).text()).trim()).toBe(manifest.version); expect(await p.exited).toBe(0);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+test('renaming preserves the legacy ledger and prefers an existing Tokonto ledger', () => {
+  const root = mkdtempSync(join(tmpdir(), 'tokonto-paths-'));
+  try {
+    const current = join(root, '.tokonto'), legacy = join(root, '.token-usage');
+    expect(defaultDataDir({}, root)).toBe(current);
+    const old = new App(legacy);
+    old.store.ingest([{ id: 'retained', source: 'test', session: 's', model: 'unknown', timestamp: '2026-09-18T00:00:00Z', tokens: { input: 10, output: 5 } }]); old.close();
+    mkdirSync(current);
+    expect(defaultDataDir({}, root)).toBe(legacy);
+    const reopened = new App(defaultDataDir({}, root));
+    try { expect(reopened.store.stats().summary.events).toBe(1); } finally { reopened.close(); }
+    const fresh = new App(current); fresh.close();
+    expect(defaultDataDir({}, root)).toBe(current);
+    expect(defaultDataDir({ TOKEN_USAGE_HOME: legacy }, root)).toBe(legacy);
+    expect(defaultDataDir({ TOKONTO_HOME: current, TOKEN_USAGE_HOME: legacy }, root)).toBe(current);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+test('Tokonto environment selects the ledger and explicit data-dir takes precedence', async () => {
+  const root = mkdtempSync(join(tmpdir(), 'tokonto-env-'));
+  try {
+    const env = { ...process.env, TOKONTO_HOME: join(root, 'new'), TOKEN_USAGE_HOME: join(root, 'legacy') };
+    for (const [args, expected] of [[[], env.TOKONTO_HOME], [['--data-dir', join(root, 'explicit')], join(root, 'explicit')]] as const) {
+      const p = Bun.spawn([process.execPath, cli, 'init', '--json', ...args], { env, stdout: 'pipe', stderr: 'pipe' });
+      const result = JSON.parse(await new Response(p.stdout).text());
+      expect(await p.exited).toBe(0); expect(result.data.dataDir).toBe(expected);
+    }
+    expect(await Bun.file(join(root, 'legacy/usage.sqlite')).exists()).toBe(false);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 async function run(root: string, args: string[]) {

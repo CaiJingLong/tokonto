@@ -1,0 +1,24 @@
+import { mkdirSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
+import manifest from '../package.json';
+
+process.chdir(fileURLToPath(new URL('..', import.meta.url)));
+const build = Bun.spawn([process.execPath, 'scripts/build.ts'], { stdout: 'inherit', stderr: 'inherit' });
+if (await build.exited !== 0) throw new Error('Build failed');
+const output = resolve('artifacts/npm');
+mkdirSync(output, { recursive: true });
+const pack = Bun.spawn(['npm', 'pack', '--ignore-scripts', '--json', '--pack-destination', output], { stdout: 'pipe', stderr: 'inherit' });
+const result = await new Response(pack.stdout).text();
+if (await pack.exited !== 0) throw new Error('npm pack failed');
+const [info] = JSON.parse(result);
+if (info.name !== manifest.name || info.version !== manifest.version) throw new Error('Package identity mismatch');
+const required = ['dist/cli.js', 'dist/web/index.html', 'dist/web/app.js', 'dist/web/style.css', 'dist/skill/SKILL.md', 'dist/THIRD_PARTY_NOTICES.md', 'LICENSE', 'README.md'];
+for (const path of required) if (!info.files.some((f: any) => f.path === path)) throw new Error(`Missing package asset: ${path}`);
+const allowed = /^(?:dist\/|docs\/|examples\/|\.agents\/skills\/tokonto\/|(?:package\.json|README\.md|LICENSE|CHANGELOG\.md|CONTRIBUTING\.md|SECURITY\.md)$)/;
+if (info.files.some((f: any) => !allowed.test(f.path))) throw new Error('Unexpected file in npm package');
+const archive = join(output, info.filename);
+const sha = createHash('sha256').update(new Uint8Array(await Bun.file(archive).arrayBuffer())).digest('hex');
+await Bun.write(join(output, 'SHA256SUMS'), `${sha}  ${info.filename}\n`);
+console.log(JSON.stringify({ package: `${info.name}@${info.version}`, archive, bytes: info.size, files: info.files.map((f: any) => f.path), sha256: sha }, null, 2));
