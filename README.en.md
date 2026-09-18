@@ -4,6 +4,27 @@
 
 A local, AI-first dashboard for token usage and cost estimates. Collect usage from different AI applications, estimate costs with auditable model, date and time-window rules, and add script providers written in any language.
 
+## Screenshots
+
+These screenshots use demo data and example paths to show the English interface. Usage and prices are illustrative.
+
+**Overview**: explore token usage, cost trends, cache hit rates, and breakdowns by source and model.
+
+![Tokonto English overview with cost trends, source breakdowns and model statistics](docs/screenshots/overview-en.jpg)
+
+<details>
+<summary>View sources and pricing screenshots</summary>
+
+**Sources**: manage built-in tools and script providers, and check their sync status.
+
+![Tokonto English sources page showing Cherry Studio, Claude Code, Codex, OMP and WorkBuddy](docs/screenshots/sources-en.jpg)
+
+**Pricing**: manage model prices, configure dates, time windows and cache rates, and browse built-in presets.
+
+![Tokonto English pricing page with custom rates and time-based model price presets](docs/screenshots/pricing-en.jpg)
+
+</details>
+
 ## The name
 
 **Tokonto** combines **Token** and the German word **Konto** (account): `Tok` from Token followed by `onto` from Konto. Think of it as your **AI usage ledger**: one place to account for tokens across applications, calculate costs by model and time, and trace every estimate.

@@ -4,6 +4,27 @@
 
 本地运行、AI 优先的 token 用量与计费仪表盘。汇集不同 AI 应用的用量，通过可审计的日期、时段和模型规则估算费用；可用任意语言编写 Provider 脚本。
 
+## 项目截图
+
+以下截图使用演示数据与示例路径，展示中文界面；用量和价格仅用于演示。
+
+**用量概览**：查看 token 用量、费用趋势、缓存命中率，以及不同来源和模型的占比。
+
+![Tokonto 中文用量概览：费用趋势、来源分布与模型统计](docs/screenshots/overview-zh-CN.jpg)
+
+<details>
+<summary>查看数据来源与计费规则截图</summary>
+
+**数据来源**：集中管理内置工具和脚本 Provider，查看同步状态。
+
+![Tokonto 中文数据来源：Cherry Studio、Claude Code、Codex、OMP 与 WorkBuddy](docs/screenshots/sources-zh-CN.jpg)
+
+**计费规则**：管理模型价格，配置日期、时段和缓存费率，并查看内置预设。
+
+![Tokonto 中文计费规则：自定义价格与模型分时价格预设](docs/screenshots/pricing-zh-CN.jpg)
+
+</details>
+
 ## 名字的由来
 
 **Tokonto** 的命名灵感来自 **Token** 与德语 **Konto**（账户）的组合：取 Token 的 `Tok`，接上 Konto 的 `onto`，组成 Tokonto。它表达的是一本属于你的 **AI 用量账本**：把不同应用的 token 消耗汇集起来，按模型、日期和时段算清费用，让每一笔估算都能追溯。
