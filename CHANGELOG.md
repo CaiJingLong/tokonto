@@ -1,5 +1,22 @@
 # 更新记录
 
+## 0.2.0 — 2026-09-19
+
+### 中文
+
+- 面板支持简体中文 / English 切换、浏览器语言检测和本地偏好记忆，覆盖导航、图表、表单、提示及无障碍标签。
+- 切换保留当前筛选、时区与币种，不改变用量或计费快照。
+- 新增英文 README、双语发布说明及本地化维护约定；两种发行包均包含双语 README。
+- 本版本通过 GitHub Release 触发 npm OIDC 自动发布。
+
+### English
+
+- Added Simplified Chinese / English switching, browser language detection and saved preferences across navigation, charts, forms, messages and accessibility labels.
+- Language changes preserve filters, time zone, currency, usage and pricing snapshots.
+- Added a full English README, bilingual release notes and localization guidelines; both distribution formats include both READMEs.
+- This version uses GitHub Release events to trigger npm OIDC publishing.
+
+
 ## 0.1.0
 
 首个公开版本。

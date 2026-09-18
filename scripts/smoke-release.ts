@@ -48,6 +48,7 @@ try {
   assert.match(await Bun.file(join(root, 'LICENSE')).text(), /MIT License/);
   for (const dep of ['decimal.js', 'luxon', 'zod']) assert((await Bun.file(join(assets, 'THIRD_PARTY_NOTICES.md')).text()).includes(`## ${dep} `));
   assert.equal((await Bun.file(join(root, 'package.json')).json()).bin['tokonto'], npmPackage ? 'dist/cli.js' : 'cli.js');
+  for (const readme of ['README.md', 'README.en.md']) assert((await Bun.file(join(root, readme)).text()).includes('tokonto server --open'), `Missing bilingual guide: ${readme}`);
   await command(['init']);
   // Disable every built-in source before any sync; never read personal logs.
   for (const provider of await command(['providers', 'list'])) {

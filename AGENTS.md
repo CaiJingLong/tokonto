@@ -8,3 +8,5 @@
 - Provider 只保存白名单用量元数据；不能持久化聊天正文或凭证。
 - 测试使用脱敏构造数据和隔离临时目录，不把个人日志提交到仓库。
 - 项目 Skill：`.agents/skills/tokonto/SKILL.md`；操作用量/来源/价格时先用 CLI `schema --json` 发现接口。
+- UI 文案必须同时提供简体中文和英文，集中维护 `web/messages.ts`，遵循 `docs/localization.md`。语言切换不能修改业务数据或计费语义。
+- README.md 与 README.en.md 同步维护；每个新版本的 Release 说明和 CHANGELOG 都需中英文，发行包必须包含两份 README。

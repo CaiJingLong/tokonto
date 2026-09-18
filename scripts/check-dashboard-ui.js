@@ -24,7 +24,7 @@ async page => {
     for (const days of ['7', '30', '90', 'all']) {
       t = Date.now(); await page.locator(`[data-days="${days}"]`).click(); await ready(); elapsed[days] = Date.now() - t;
       assert(await count() === expected.trend.summary.events, `date ${days} has stale metrics`);
-      assert(await page.locator('#activity-count').innerText() === `${expected.activity.total.toLocaleString('en-US')} RECORDS`, 'stale activity');
+      assert(Number((await page.locator('#activity-count').innerText()).replace(/\D/g, '')) === expected.activity.total, 'stale activity');
       assert(page.url().includes(`days=${days}&`), 'URL filter mismatch');
     }
     assert(await count() === all, 'all range changed in isolated database');

@@ -7,3 +7,6 @@
 
 .provider-status{overflow-wrap:anywhere}
 @media(max-width:600px){.trend-chart{height:200px}}
+
+.language-picker{display:flex;align-items:center;gap:6px;color:#6f8778}.language-picker select{min-width:92px;font-size:12px}.ai-button span[data-i18n]{float:none}.primary>span[data-i18n]{font-size:inherit;margin-right:0}.breadcrumbs>span[data-i18n]{margin:0;color:inherit}.ai-label span[data-i18n]{color:inherit;margin:0}.section-actions{flex-wrap:wrap}.heading-actions{flex-shrink:0}.metric-value .unit{font-size:12px}html[lang="en"] .brand small{letter-spacing:0}html[lang="en"] .metric-note{line-height:1.6}
+@media(max-width:600px){.topbar .breadcrumbs>span{display:none}.topbar .avatar{display:none}.topbar{gap:10px}.language-picker select{min-width:84px}.metric-value{overflow-wrap:anywhere}.chart-controls select{max-width:130px}}

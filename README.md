@@ -1,5 +1,7 @@
 # Tokonto
 
+**简体中文** | [English](README.en.md)
+
 本地运行、AI 优先的 token 用量与计费仪表盘。汇集不同 AI 应用的用量，通过可审计的日期、时段和模型规则估算费用；可用任意语言编写 Provider 脚本。
 
 ## 名字的由来
@@ -24,12 +26,12 @@ tokonto server --open
 
 ## 从 GitHub Release 安装
 
-需要 **Bun ≥ 1.3.14**（[安装 Bun](https://bun.sh/docs/installation)）。从仓库 Releases 下载 `tokonto-0.1.0.tar.gz` 和 `SHA256SUMS`，放在同一目录：
+需要 **Bun ≥ 1.3.14**（[安装 Bun](https://bun.sh/docs/installation)）。从仓库 Releases 下载 `tokonto-0.2.0.tar.gz` 和 `SHA256SUMS`，放在同一目录：
 
 ```sh
 shasum -a 256 -c SHA256SUMS  # Linux 可用 sha256sum -c SHA256SUMS
-tar -xzf tokonto-0.1.0.tar.gz
-cd tokonto-0.1.0
+tar -xzf tokonto-0.2.0.tar.gz
+cd tokonto-0.2.0
 bun cli.js --version
 bun cli.js server --open
 ```
@@ -60,6 +62,10 @@ bun run cli -- server --open
 从旧名 `token-usage` 升级时，若新目录尚无账本，会继续使用 `~/.token-usage/usage.sqlite`，不移动或复制数据。路径优先级为 `--data-dir` → `TOKONTO_HOME` → 兼容变量 `TOKEN_USAGE_HOME` → 已有的新目录账本 → 已有的旧目录账本 → 新建 `~/.tokonto`。用 `tokonto doctor --json` 查看实际数据目录。
 
 ## Dashboard
+
+右上角可切换 **中文 / English**，浏览器会记住选择。首次访问跟随浏览器的首个受支持语言，其他语言回退为英文；中文地区语言统一显示简体中文。存储被禁用时仍可在当前页面切换。语言切换不会重置筛选、时区、币种或重新请求统计。模型标识、用户自定义名称、CLI/API 字段、CSV 表头及原始技术诊断保持原值。
+
+后续维护同时更新中英文 README 和双语 Release；新增界面文案进入 `web/messages.ts`，见[本地化指南](docs/localization.md)。
 
 - 总 token、费用估算、缓存命中率、用量记录数。
 - 按小时、日、月查看趋势，按来源、模型、日期和时区筛选。

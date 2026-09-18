@@ -9,6 +9,8 @@ process.chdir(fileURLToPath(new URL('..', import.meta.url)));
 if (!/^\d+\.\d+\.\d+(?:-[a-zA-Z0-9.-]+)?$/.test(manifest.version)) throw new Error('Invalid release version');
 const notes = `docs/releases/${manifest.version}.md`;
 if (!await Bun.file(notes).exists()) throw new Error(`Missing ${notes}`);
+const releaseNotes = await Bun.file(notes).text();
+for (const heading of ["## 中文", "## English"]) if (!releaseNotes.includes(heading)) throw new Error(`Missing bilingual release section: ${heading}`);
 const build = Bun.spawn([process.execPath, 'scripts/build.ts'], { stdout: 'inherit', stderr: 'inherit' });
 if (await build.exited !== 0) throw new Error('Build failed');
 const name = `${manifest.name}-${manifest.version}`, output = resolve('artifacts');
@@ -18,7 +20,7 @@ try {
   const root = join(stage, name);
   cpSync('dist', root, { recursive: true });
   // Explicit allowlist: never distribute a checkout, local database or logs.
-  for (const path of ['README.md', 'CHANGELOG.md', 'SECURITY.md', 'CONTRIBUTING.md', 'docs', 'examples', '.agents/skills/tokonto']) {
+  for (const path of ['README.md', 'README.en.md', 'CHANGELOG.md', 'SECURITY.md', 'CONTRIBUTING.md', 'docs', 'examples', '.agents/skills/tokonto']) {
     cpSync(path, join(root, path), { recursive: true });
   }
   await Bun.write(join(root, 'package.json'), JSON.stringify({
