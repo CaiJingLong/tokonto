@@ -2,7 +2,7 @@
 
 [简体中文](README.md) | **English**
 
-A local, AI-first dashboard for token usage and cost estimates. Collect usage from different AI applications, estimate costs with auditable model, date and time-window rules, and add script providers written in any language.
+A local, AI-first dashboard for token usage and cost estimates. Read local session files or databases from AI applications without modifying them, aggregate token usage, and estimate costs using model, date and time-window rules. Extend the available sources with provider scripts written in any language.
 
 ## Screenshots
 
@@ -105,7 +105,7 @@ An empty ledger shows empty states, never synthetic data. A usage record may rep
 
 Adapters have been checked against local real logs/databases, but upstream formats can change. Missing, inconsistent or unreadable records produce diagnostics. A missing directory appears as “No data found”; one provider failing does not stop others.
 
-Only allowlisted usage metadata is stored. Chat content, API keys and raw logs are never saved to the ledger. Original application logs are read-only.
+Built-in providers only read local session files or databases to extract and aggregate usage; they do not modify the original application's data. Tokonto stores allowlisted usage metadata in its own local ledger, without saving chat content, API keys or raw logs. Data access by custom script providers depends on the script implementation.
 
 ```sh
 tokonto doctor --json
