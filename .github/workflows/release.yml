@@ -1,0 +1,33 @@
+name: Draft GitHub Release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  verify:
+    uses: ./.github/workflows/ci.yml
+  release:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - name: Check tag matches package version
+        run: bun -e 'import p from "./package.json"; if (process.env.GITHUB_REF_NAME !== `v${p.version}`) throw new Error("Tag/version mismatch")'
+      - run: bun install --frozen-lockfile
+      - run: bun run release:pack
+      - run: bun run release:smoke
+      - name: Create draft with archive and checksum
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: gh release create "$RELEASE_TAG" artifacts/*.tar.gz artifacts/SHA256SUMS --draft --verify-tag --title "$RELEASE_TAG" --notes-file artifacts/release-notes.md

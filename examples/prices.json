@@ -1,0 +1,18 @@
+{
+  "rules": [
+    {
+      "id": "my-model-standard", "model": "my-model", "vendor": "my-gateway", "channel": "api",
+      "currency": "CNY", "priority": 0, "timezone": "Asia/Shanghai",
+      "rates": { "input": "2", "output": "8", "cacheRead": "0.2" },
+      "label": "示例基准价格"
+    },
+    {
+      "id": "my-model-autumn-night", "model": "my-model", "vendor": "my-gateway", "channel": "api",
+      "currency": "CNY", "priority": 100, "timezone": "Asia/Shanghai",
+      "dateFrom": "2026-09-21", "dateTo": "2026-09-28",
+      "windows": [{ "start": "00:00", "end": "06:00" }],
+      "rates": { "input": "1", "output": "4", "cacheRead": "0.1" },
+      "label": "示例：指定一周凌晨半价"
+    }
+  ]
+}

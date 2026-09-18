@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.token-usage/
+*.sqlite*
+.DS_Store
+.env
+.env.*
+!.env.example
+coverage/
+artifacts/
+.playwright-cli/

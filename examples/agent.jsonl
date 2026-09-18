@@ -1,0 +1,2 @@
+{"request_id":"example-001","session_id":"session-001","time":"2026-09-18T01:00:00Z","model":"my-model","input_tokens":10000,"cached_tokens":2500,"output_tokens":900}
+{"request_id":"example-002","session_id":"session-001","time":"2026-09-18T04:00:00Z","model":"my-model","input_tokens":20000,"cached_tokens":12000,"output_tokens":1400}
